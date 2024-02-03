@@ -6,105 +6,142 @@
     <meta name="description" content="&lt;model-viewer&gt; template">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link type="text/css" href="./styles.css" rel="stylesheet"/>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        #container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        model-viewer {
+            width: 100%;
+            max-width: 800px; /* Adjust max-width as needed */
+            height: 60vh; /* Adjust height as needed */
+        }
+
+        #controls {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        button {
+            margin: 0 10px;
+        }
+    </style>
 </head>
 <body>
-    <!-- <model-viewer> HTML element -->
-    <model-viewer src="https://cdn.glitch.me/e496992e-9094-4359-a636-50ce5944c1c0/turbo_engine_animation.glb?v=1706994029165" 
-                  ios-src="https://cdn.glitch.global/e496992e-9094-4359-a636-50ce5944c1c0/Turbo_Engine_Animation.usdz?v=1706994030790"
-                  ar ar-modes="webxr scene-viewer quick-look" 
-                  camera-controls tone-mapping="commerce" poster="poster.webp" shadow-intensity="1">
-      <div class="progress-bar hide" slot="progress-bar">
-          <div class="update-bar"></div>
-      </div>
-      <div id="ar-prompt">
-          <img src="ar_hand_prompt.png">
-      </div>
-    </model-viewer>
-    
-    <!-- Play Button -->
-    <button id="play-button" onclick="togglePlay()">
-        <img src="play_icon.png" alt="Play Icon">
-    </button>
-    
-    <!-- Pause Button -->
-    <button id="pause-button" onclick="pauseAnimation()" style="display: none;">
-        <img src="pause_icon.png.jpg" alt="Pause Icon">
-    </button>
-    
-    <!-- Animation Speed Control -->
-    <input type="range" id="speed-control" min="0.1" max="2" step="0.1" value="1">
+    <div id="container">
+        <!-- <model-viewer> HTML element -->
+        <model-viewer src="https://cdn.glitch.me/e496992e-9094-4359-a636-50ce5944c1c0/turbo_engine_animation.glb?v=1706994029165" 
+                      ios-src="https://cdn.glitch.global/e496992e-9094-4359-a636-50ce5944c1c0/Turbo_Engine_Animation.usdz?v=1706994030790"
+                      ar ar-modes="webxr scene-viewer quick-look" 
+                      camera-controls tone-mapping="commerce" poster="poster.webp" shadow-intensity="1">
+          <div class="progress-bar hide" slot="progress-bar">
+              <div class="update-bar"></div>
+          </div>
+          <div id="ar-prompt">
+              <img src="ar_hand_prompt.png">
+          </div>
+        </model-viewer>
+        
+        <div id="controls">
+            <!-- Play Button -->
+            <button id="play-button" onclick="togglePlay()">
+                <img src="play_icon.png" alt="Play Icon">
+            </button>
+            
+            <!-- Pause Button -->
+            <button id="pause-button" onclick="pauseAnimation()" style="display: none;">
+                <img src="pause_icon.png.jpg" alt="Pause Icon">
+            </button>
+            
+            <!-- Animation Speed Control -->
+            <input type="range" id="speed-control" min="0.1" max="2" step="0.1" value="1">
+        </div>
+    </div>
     
     <script src="script.js"></script>
     <!-- Loads <model-viewer> for browsers: -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-  <script>
-      const modelViewer = document.querySelector("model-viewer");
-      const playButton = document.getElementById("play-button");
-      const pauseButton = document.getElementById("pause-button");
-      const speedControl = document.getElementById("speed-control");
-      let animationFinishedEventAdded = false;
+    <script>
+        const modelViewer = document.querySelector("model-viewer");
+        const playButton = document.getElementById("play-button");
+        const pauseButton = document.getElementById("pause-button");
+        const speedControl = document.getElementById("speed-control");
+        let animationFinishedEventAdded = false;
 
-      // Stop auto-rotation when animation starts
-      modelViewer.addEventListener('play', () => {
-          modelViewer.autoRotate = false;
-          if (!animationFinishedEventAdded) {
-              modelViewer.addEventListener('animation-finish', animationFinished);
-              animationFinishedEventAdded = true;
-          }
-      });
+        // Stop auto-rotation when animation starts
+        modelViewer.addEventListener('play', () => {
+            modelViewer.autoRotate = false;
+            if (!animationFinishedEventAdded) {
+                modelViewer.addEventListener('animation-finish', animationFinished);
+                animationFinishedEventAdded = true;
+            }
+        });
 
-      // Toggle play/pause when play button is clicked
-      function togglePlay() {
-          if (modelViewer.paused) {
-              modelViewer.play();
-              playButton.style.display = "none";
-              pauseButton.style.display = "block";
-          } else {
-              modelViewer.pause();
-              playButton.style.display = "block";
-              pauseButton.style.display = "none";
-          }
-      }
+        // Toggle play/pause when play button is clicked
+        function togglePlay() {
+            if (modelViewer.paused) {
+                modelViewer.play();
+                playButton.style.display = "none";
+                pauseButton.style.display = "block";
+            } else {
+                modelViewer.pause();
+                playButton.style.display = "block";
+                pauseButton.style.display = "none";
+            }
+        }
 
-      // Pause the animation
-      function pauseAnimation() {
-          modelViewer.pause();
-          playButton.style.display = "block";
-          pauseButton.style.display = "none";
-      }
+        // Pause the animation
+        function pauseAnimation() {
+            modelViewer.pause();
+            playButton.style.display = "block";
+            pauseButton.style.display = "none";
+        }
 
-      // Animation finished event handler
-      function animationFinished() {
-          modelViewer.pause();
-          playButton.style.display = "block";
-          pauseButton.style.display = "none";
-      }
+        // Animation finished event handler
+        function animationFinished() {
+            modelViewer.pause();
+            playButton.style.display = "block";
+            pauseButton.style.display = "none";
+        }
 
-      // Adjust animation speed based on speed control
-      speedControl.addEventListener("input", function () {
-          modelViewer.playbackRate = this.value;
-      });
+        // Adjust animation speed based on speed control
+        speedControl.addEventListener("input", function () {
+            modelViewer.playbackRate = this.value;
+        });
 
-      // Stop the animation
-      function stopAnimation() {
-          modelViewer.stop();
-          playButton.style.display = "block";
-          pauseButton.style.display = "none";
-      }
+        // Stop the animation
+        function stopAnimation() {
+            modelViewer.stop();
+            playButton.style.display = "block";
+            pauseButton.style.display = "none";
+        }
 
-      // Adjust zoom (field of view) during animation
-      function adjustZoom() {
-          const zoomFactor = 1.5; // Adjust this value based on your preference
-          modelViewer.cameraOrbit = `${modelViewer.cameraOrbit} ${zoomFactor}turn`;
-      }
+        // Adjust zoom (field of view) during animation
+        function adjustZoom() {
+            const zoomFactor = 1.5; // Adjust this value based on your preference
+            modelViewer.cameraOrbit = `${modelViewer.cameraOrbit} ${zoomFactor}turn`;
+        }
 
-      // Event listener to adjust zoom during animation
-      modelViewer.addEventListener('timeupdate', () => {
-          if (!modelViewer.paused) {
-              adjustZoom();
-          }
-      });
-  </script>
-
+        // Event listener to adjust zoom during animation
+        modelViewer.addEventListener('timeupdate', () => {
+            if (!modelViewer.paused) {
+                adjustZoom();
+            }
+        });
+    </script>
 </body>
 </html>
