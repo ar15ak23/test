@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Engine AR</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer@1.3.0/dist/model-viewer.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        #configurator {
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls {
+            position: absolute;
+            top: 10px;
+            z-index: 999;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        .ar-icon,
+        .play-icon {
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px;
+            border-radius: 50%;
+        }
+
+        .ar-icon i,
+        .play-icon i {
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="controls">
+        <!-- Play Animation Icon -->
+        <div onclick="playAnimation()" class="play-icon"><i class="fas fa-play"></i></div>
+
+        <!-- View AR Button -->
+        <div onclick="viewAR()" class="ar-icon"><i class="fas fa-vr-cardboard"></i></div>
+    </div>
+
+    <model-viewer id="configurator" src="https://cdn.glitch.me/0298af9e-7bd3-4daa-9e5d-bc9c1f6f71c5/turbo_engine_animation.glb?v=1706987527066"
+        ios-src="https://replit.com/@jmworksdesign/HTML-CSS-JS#assests/Turbo_Engine_Animation.usdz" ar ar-modes="webxr scene-viewer quick-look"
+        quick-look-browsers="safari chrome" camera-controls></model-viewer>
+
+    <script>
+        // Function to trigger AR functionality
+        function viewAR() {
+            const modelViewer = document.getElementById("configurator");
+            if (modelViewer.canActivateAR) {
+                modelViewer.activateAR();
+            } else {
+                alert("AR is not supported on this device or browser.");
+            }
+        }
+
+        // Function to play animation
+        function playAnimation() {
+            const modelViewer = document.getElementById("configurator");
+            modelViewer.animationName = 'Take 001'; // Change to your animation name
+            modelViewer.currentTime = 0;
+            modelViewer.play();
+        }
+    </script>
+</body>
+
+</html>
