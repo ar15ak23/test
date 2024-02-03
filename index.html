@@ -1,83 +1,98 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Engine AR</title>
-    <script type="module" src="https://unpkg.com/@google/model-viewer@1.3.0/dist/model-viewer.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        body,
-        html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
-
-        #configurator {
-            width: 100%;
-            height: 100%;
-        }
-
-        .controls {
-            position: absolute;
-            top: 10px;
-            z-index: 999;
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            padding: 0 10px;
-            box-sizing: border-box;
-        }
-
-        .ar-icon,
-        .play-icon {
-            cursor: pointer;
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 5px;
-            border-radius: 50%;
-        }
-
-        .ar-icon i,
-        .play-icon i {
-            color: #333;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="controls">
-        <!-- Play Animation Icon -->
-        <div onclick="playAnimation()" class="play-icon"><i class="fas fa-play"></i></div>
-
-        <!-- View AR Button -->
-        <div onclick="viewAR()" class="ar-icon"><i class="fas fa-vr-cardboard"></i></div>
-    </div>
-
-    <model-viewer id="configurator" src="https://cdn.glitch.me/0298af9e-7bd3-4daa-9e5d-bc9c1f6f71c5/turbo_engine_animation.glb?v=1706987527066"
-        ios-src="https://replit.com/@jmworksdesign/HTML-CSS-JS#assests/Turbo_Engine_Animation.usdz" ar ar-modes="webxr scene-viewer quick-look"
-        quick-look-browsers="safari chrome" camera-controls></model-viewer>
-
+  <head>
+    <title>&lt;model-viewer&gt; template</title>
+    <meta charset="utf-8">
+    <meta name="description" content="&lt;model-viewer&gt; template">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" href="./styles.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <!-- <model-viewer> HTML element -->
+    <model-viewer src="https://cdn.glitch.me/e496992e-9094-4359-a636-50ce5944c1c0/turbo_engine_animation.glb?v=1706994029165" ar ar-modes="webxr scene-viewer quick-look" camera-controls tone-mapping="commerce" poster="poster.webp" shadow-intensity="1">
+      <div class="progress-bar hide" slot="progress-bar">
+          <div class="update-bar"></div>
+      </div>
+      <button slot="ar-button" id="ar-button">
+          <img src="ar_icon.png" alt="AR Icon">
+      </button>
+      <div id="ar-prompt">
+          <img src="ar_hand_prompt.png">
+      </div>
+    </model-viewer>
+    
+    <!-- Play Button -->
+    <button id="play-button" onclick="togglePlay()">
+        <img src="play_icon.png" alt="Play Icon">
+    </button>
+    
+    <!-- Pause Button -->
+    <button id="pause-button" onclick="pauseAnimation()" style="display: none;">
+        <img src="pause_icon.png" alt="Pause Icon">
+    </button>
+    
+    <!-- Animation Speed Control -->
+    <input type="range" id="speed-control" min="0.1" max="2" step="0.1" value="1">
+    
+    <script src="script.js"></script>
+    <!-- Loads <model-viewer> for browsers: -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <script>
-        // Function to trigger AR functionality
-        function viewAR() {
-            const modelViewer = document.getElementById("configurator");
-            if (modelViewer.canActivateAR) {
-                modelViewer.activateAR();
+        const modelViewer = document.querySelector("model-viewer");
+        const playButton = document.getElementById("play-button");
+        const pauseButton = document.getElementById("pause-button");
+        const speedControl = document.getElementById("speed-control");
+        let animationFinishedEventAdded = false;
+
+        // Stop auto-rotation when animation starts
+        modelViewer.addEventListener('play', () => {
+            modelViewer.autoRotate = false;
+            if (!animationFinishedEventAdded) {
+                modelViewer.addEventListener('animation-finish', animationFinished);
+                animationFinishedEventAdded = true;
+            }
+        });
+
+        // Toggle play/pause when play button is clicked
+        function togglePlay() {
+            if (modelViewer.paused) {
+                modelViewer.play();
+                playButton.style.display = "none";
+                pauseButton.style.display = "block";
             } else {
-                alert("AR is not supported on this device or browser.");
+                modelViewer.pause();
+                playButton.style.display = "block";
+                pauseButton.style.display = "none";
             }
         }
 
-        // Function to play animation
-        function playAnimation() {
-            const modelViewer = document.getElementById("configurator");
-            modelViewer.animationName = 'Take 001'; // Change to your animation name
-            modelViewer.currentTime = 0;
-            modelViewer.play();
+        // Pause the animation
+        function pauseAnimation() {
+            modelViewer.pause();
+            playButton.style.display = "block";
+            pauseButton.style.display = "none";
+        }
+
+        // Animation finished event handler
+        function animationFinished() {
+            modelViewer.pause();
+            playButton.style.display = "block";
+            pauseButton.style.display = "none";
+        }
+
+        // Adjust animation speed based on speed control
+        speedControl.addEventListener("input", function () {
+            modelViewer.playbackRate = this.value;
+        });
+
+        // Stop the animation
+        function stopAnimation() {
+            modelViewer.stop();
+            playButton.style.display = "block";
+            pauseButton.style.display = "none";
         }
     </script>
-</body>
 
+
+  </body>
 </html>
